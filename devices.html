@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📱 Devices - 404 Find Us</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #f8fbff;
+    }
+
+    aside.sidebar {
+      width: 220px;
+      position: fixed;
+      height: 100vh;
+      padding: 1rem;
+      background: #e3f0ff;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 0.7rem;
+    }
+
+    .sidebar ul li a {
+      color: #0077cc;
+      text-decoration: none;
+      font-weight: bold;
+      display: block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+    }
+
+    .sidebar ul li a.active {
+      background-color: #0077cc;
+      color: white;
+    }
+
+    main {
+      margin-left: 240px;
+      padding: 2rem;
+    }
+
+    h1 {
+      color: #003366;
+    }
+
+    .device-card {
+      background-color: #e6f0ff;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      font-weight: bold;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 22px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      border-radius: 34px;
+      transition: .4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      border-radius: 50%;
+      transition: .4s;
+    }
+
+    input:checked + .slider {
+      background-color: #0077ff;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(22px);
+    }
+
+    #addDeviceForm {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+
+    #addDeviceForm input {
+      flex: 1;
+      padding: 0.5rem;
+      border: 1px solid #0077ff;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    #addDeviceForm button {
+      padding: 0.5rem 1rem;
+      background-color: #0077ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #addDeviceForm button:hover {
+      background-color: #005fcc;
+    }
+
+    .settings-panel {
+      margin-top: 0.5rem;
+    }
+
+    .settings-panel input {
+      padding: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-right: 0.5rem;
+    }
+
+    .settings-panel button {
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .settings-panel button:hover {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <ul>
+      <li><a href="devices.html" class="active">📱 Devices</a></li>
+    </ul>
+  </aside>
+
+  <main>
+    <h1>📱 Apparatenlijst</h1>
+
+    <div id="deviceList">
+      <!-- Apparaten komen hier -->
+    </div>
+
+    <form id="addDeviceForm">
+      <input type="text" id="newDeviceName" placeholder="Nieuw apparaat..." required />
+      <button type="submit">➕ Toevoegen</button>
+    </form>
+  </main>
+
+  <script>
+    const devices = [
+      { name: "🧊 Fridge", isOn: true },
+      { name: "📺 TV", isOn: false },
+      { name: "❄️ AC", isOn: true }
+    ];
+
+    const deviceList = document.getElementById("deviceList");
+    const addDeviceForm = document.getElementById("addDeviceForm");
+    const newDeviceName = document.getElementById("newDeviceName");
+
+    function renderDevices() {
+      deviceList.innerHTML = "";
+      devices.forEach((device, index) => {
+        const div = document.createElement("div");
+        div.className = "device-card";
+        div.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span>${device.name}</span>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <label class="switch">
+                <input type="checkbox" data-index="${index}" ${device.isOn ? "checked" : ""}>
+                <span class="slider"></span>
+              </label>
+              <button class="settings-btn" data-index="${index}">⚙️</button>
+            </div>
+          </div>
+          <div class="settings-panel" id="settings-${index}" style="display:none;">
+            <input type="text" value="${device.name}" id="edit-${index}" />
+            <button onclick="updateDevice(${index})">Opslaan</button>
+            <button onclick="removeDevice(${index})" style="color:red;">Verwijderen</button>
+          </div>
+        `;
+        deviceList.appendChild(div);
+      });
+
+      document.querySelectorAll(".device-card input[type='checkbox']").forEach(input => {
+        input.addEventListener("change", e => {
+          const i = e.target.dataset.index;
+          devices[i].isOn = e.target.checked;
+        });
+      });
+
+      document.querySelectorAll(".settings-btn").forEach(btn => {
+        btn.addEventListener("click", e => {
+          const i = e.target.dataset.index;
+          const panel = document.getElementById(`settings-${i}`);
+          panel.style.display = panel.style.display === "none" ? "block" : "none";
+        });
+      });
+    }
+
+    function updateDevice(index) {
+      const input = document.getElementById(`edit-${index}`);
+      if (input.value.trim()) {
+        devices[index].name = input.value.trim();
+        renderDevices();
+      }
+    }
+
+    function removeDevice(index) {
+      devices.splice(index, 1);
+      renderDevices();
+    }
+
+    addDeviceForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const name = newDeviceName.value.trim();
+      if (!name) return alert("Vul een naam in.");
+      devices.unshift({ name, isOn: false });
+      newDeviceName.value = "";
+      renderDevices();
+    });
+
+    renderDevices();
+  </script>
+
+</body>
+</html>

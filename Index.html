@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>⚡ 404 Find Us - Energy Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <div class="container">
+    <aside class="sidebar">
+      <div class="dashboard-section" id="overview">
+        <div class="top-row"></div>
+      </div>
+
+      <div class="dashboard-section" id="devices" style="display: none;">
+        <h2>Devices Section</h2>
+        <p>Hier komen je apparatenbeheer opties.</p>
+      </div>
+
+      <div class="dashboard-section" id="analytics" style="display: none;">
+        <h2>Analytics Section</h2>
+        <p>Hier komen je energie-analyses en grafieken.</p>
+      </div>
+
+      <div class="dashboard-section" id="settings" style="display: none;">
+        <h2>Settings Section</h2>
+        <p>Hier kan je instellingen beheren.</p>
+      </div>
+
+      <nav>
+        <ul>
+          <li><a href="index.html">🏠 Overview</a></li>
+          <li><a href="devices.html">📱 Devices</a></li>
+          <li><a href="analytics.html">📊 Analytics</a></li>
+          <li><a href="settings.html">⚙️ Settings</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <h1 class="logo">⚡ 404 Find Us</h1>
+
+      <section class="dashboard-cards">
+        <div class="card current-usage">
+          <h2>⚡ Current Usage</h2>
+          <div class="current-details">
+            <p><strong>Real-time Power:</strong> 1250W</p>
+            <p><strong>Today's Consumption:</strong> 10.5 kWh</p>
+            <p><strong>Monthly Total:</strong> 320 kWh</p>
+          </div>
+        </div>
+
+        <div class="card ai-bill">
+          <h2>💡 AI Bill Prediction</h2>
+          <p><strong>Predicted Bill:</strong> €75,00 / maand</p>
+          <p><strong>Accuracy:</strong> 95%</p>
+          <p><strong>Bill vs Last Month:</strong> -5%</p>
+          <p><strong>Days Left:</strong> 10</p>
+        </div>
+
+        <div class="card smart-appliances">
+          <h2>🔌 Smart Appliances</h2>
+          <ul id="device-list" class="device-list">
+            <li>🧊 Fridge</li>
+            <li>🧺 Washer</li>
+            <li>📺 TV</li>
+            <li>❄️ AC Unit</li>
+          </ul>
+          <div class="add-device-form">
+            <input type="text" id="device-name" placeholder="Voer apparaatnaam in" />
+            <button id="add-device-btn">➕ Toevoegen</button>
+          </div>
+        </div>
+
+        <div class="card live-energy">
+          <h2>📈 Live Energy Monitoring</h2>
+          <canvas id="liveChart"></canvas>
+          <div class="live-controls">
+            <button>🔄 Refresh Data</button>
+            <button>📤 Export Report</button>
+            <button>📱 Download App</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="filters-search">
+        <input type="text" id="searchInput" placeholder="Search devices..." />
+        <div class="filter-buttons">
+          <button onclick="filterDevices('all')">All</button>
+          <button onclick="filterDevices('high')">High Usage</button>
+          <button onclick="filterDevices('offline')">Offline</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <a href="#" data-section="settings">⚙️ Settings</a>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const deviceList = document.getElementById("device-list");
+      const addButton = document.getElementById("add-device-btn");
+      const nameInput = document.getElementById("device-name");
+
+      function createDeviceItem(name) {
+        const li = document.createElement("li");
+        li.innerHTML = `🔌 ${name}`;
+        li.classList.add("device-item");
+        li.style.cursor = "pointer";
+
+        li.addEventListener("click", () => {
+          if (li.querySelector("button")) return;
+
+          const renameBtn = document.createElement("button");
+          renameBtn.textContent = "✏️ Hernoemen";
+          renameBtn.onclick = (e) => {
+            e.stopPropagation();
+            const newName = prompt("Nieuwe naam invoeren:", name);
+            if (newName) {
+              li.innerHTML = `🔌 ${newName}`;
+              li.appendChild(document.createElement("br"));
+              li.appendChild(renameBtn);
+              li.appendChild(deleteBtn);
+            }
+          };
+
+          const deleteBtn = document.createElement("button");
+          deleteBtn.textContent = "🗑️ Verwijder";
+          deleteBtn.onclick = (e) => {
+            e.stopPropagation();
+            li.remove();
+          };
+
+          li.appendChild(document.createElement("br"));
+          li.appendChild(renameBtn);
+          li.appendChild(deleteBtn);
+        });
+
+        return li;
+      }
+
+      addButton.addEventListener("click", () => {
+        const name = nameInput.value.trim();
+        if (!name) return alert("Vul een naam in!");
+        const newItem = createDeviceItem(name);
+        deviceList.appendChild(newItem);
+        nameInput.value = "";
+      });
+    });
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>
