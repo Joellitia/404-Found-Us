@@ -104,6 +104,37 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+
+// 📡 WebSocket verbinding op dezelfde host (origin)
+const socket = new WebSocket(`ws://${location.host}`);
+
+// 🌐 Realtime widget (HTML-element voor data, voeg deze toe aan je HTML)
+const dataDisplay = document.getElementById("liveDataWidget"); // bijv. <div id="liveDataWidget"></div>
+
+socket.addEventListener("open", () => {
+  console.log("✅ Verbonden met WebSocket-server");
+});
+
+socket.addEventListener("message", (event) => {
+  console.log("📨 Ontvangen:", event.data);
+
+  // 🔄 Update het widget-tekst
+  if (dataDisplay) {
+    dataDisplay.innerText = event.data;
+  }
+
+  // 📊 (Optioneel) Live Chart bijwerken hier (indien je dat ook wilt)
+});
+
+// 🛑 Foutafhandeling
+socket.addEventListener("error", (err) => {
+  console.error("❌ WebSocket-fout:", err);
+});
+
+socket.addEventListener("close", () => {
+  console.log("🔌 WebSocket-verbinding gesloten");
+});
+  
   // Chart.js Live Energy Chart
   const ctx = document.getElementById("liveChart").getContext("2d");
   new Chart(ctx, {
