@@ -103,10 +103,19 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.toggle("dark", e.target.checked);
   });
 });
+ 
+const ws = new WebSocket(`ws://${location.host}/ws`);
 
-
-// 📡 WebSocket verbinding op dezelfde host (origin)
-const socket = new WebSocket(`ws://${location.host}`);
+ws.onmessage = (event) => {
+  try {
+    const data = JSON.parse(event.data);
+    document.getElementById('current').textContent = `Current: ${data.current} A`;
+    document.getElementById('transient').textContent = `Transient: ${data.transient} A`;
+    document.getElementById('peak').textContent = `Peak: ${data.peakCurrent} A`;
+  } catch (e) {
+    console.error("Invalid JSON:", event.data);
+  }
+};
 
 // 🌐 Realtime widget (HTML-element voor data, voeg deze toe aan je HTML)
 const dataDisplay = document.getElementById("liveDataWidget"); // bijv. <div id="liveDataWidget"></div>
@@ -134,7 +143,8 @@ socket.addEventListener("error", (err) => {
 socket.addEventListener("close", () => {
   console.log("🔌 WebSocket-verbinding gesloten");
 });
-  
+
+
   // Chart.js Live Energy Chart
   const ctx = document.getElementById("liveChart").getContext("2d");
   new Chart(ctx, {
